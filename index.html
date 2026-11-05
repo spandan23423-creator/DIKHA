@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Dikha</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;1,9..144,300;1,9..144,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff6f3;--ink:#3a1220;--soft:#7a4655;--rose:#d4486a;--blush:#f8d7de;--card:#ffffff;--line:#efcfd5}
+@media (prefers-color-scheme:dark){:root{--bg:#1d0a12;--ink:#fde8ec;--soft:#d3a0ae;--rose:#ff7d9b;--blush:#3a1623;--card:#2a101b;--line:#4a2030}}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:17px/1.7 'DM Sans',sans-serif;overflow-x:hidden}
+h1,h2,.serif{font-family:'Fraunces',serif;font-weight:300}
+canvas{position:fixed;inset:0;pointer-events:none;z-index:0}
+section{position:relative;z-index:1;max-width:980px;margin:auto;padding:90px 22px}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.hero small{color:var(--soft);font-size:1rem}
+.hero h1{font-size:clamp(3.2rem,13vw,8rem);line-height:1;font-style:italic;color:var(--rose);margin:.15em 0 .2em}
+.counter{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+.counter div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px;min-width:84px}
+.counter b{display:block;font:500 2rem 'Fraunces',serif;color:var(--rose)}
+.counter span{font-size:.82rem;color:var(--soft)}
+.since{margin-top:18px;color:var(--soft)}
+h2{font-size:clamp(2rem,6vw,3.2rem);text-align:center;margin-bottom:12px;font-style:italic}
+.sub{text-align:center;color:var(--soft);margin-bottom:46px}
+.story{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--rose);border-radius:14px;padding:clamp(20px,4vw,34px);font-size:1.25rem;line-height:1.85;margin-bottom:50px}
+.timeline{border-left:2px solid var(--line);margin-left:10px;padding-left:28px}
+.event{position:relative;margin-bottom:34px}
+.event::before{content:"";position:absolute;left:-37px;top:7px;width:14px;height:14px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 5px var(--blush)}
+.event time{color:var(--rose);font-weight:500;font-size:.9rem}
+.event h3{font:500 1.35rem 'Fraunces',serif}
+.event p{color:var(--soft)}
+.gallery{columns:3 220px;column-gap:14px}
+.gallery figure{break-inside:avoid;margin-bottom:14px;background:var(--card);padding:8px 8px 10px;border-radius:6px;border:1px solid var(--line);cursor:pointer;transition:transform .25s}
+.gallery figure:nth-child(odd){transform:rotate(-1.2deg)}.gallery figure:nth-child(even){transform:rotate(1deg)}
+.gallery figure:hover{transform:rotate(0) scale(1.03)}
+.gallery img{width:100%;display:block;border-radius:3px;background:var(--blush);min-height:140px;object-fit:cover}
+.gallery figcaption{font:italic 300 .95rem 'Fraunces',serif;color:var(--soft);padding-top:8px;text-align:center}
+.letter{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:clamp(26px,5vw,56px);font-family:'Fraunces',serif;font-weight:300;font-size:1.2rem;line-height:1.9}
+.letter p{margin-bottom:1em;white-space:pre-line}
+.sign{text-align:right;color:var(--rose);font-style:italic}
+.surprise{text-align:center;margin-top:36px}
+button{font:500 1rem 'DM Sans',sans-serif;background:var(--rose);color:#fff;border:0;border-radius:99px;padding:14px 30px;cursor:pointer}
+button:focus-visible,figure:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+#msg{margin-top:20px;font:italic 300 1.5rem 'Fraunces',serif;color:var(--rose);min-height:2em}
+footer{text-align:center;padding:40px 20px 60px;color:var(--soft);position:relative;z-index:1}
+#lb{position:fixed;inset:0;background:rgba(20,5,10,.92);display:none;align-items:center;justify-content:center;z-index:10;flex-direction:column;padding:20px}
+#lb.on{display:flex}#lb img{max-width:94vw;max-height:80vh;border-radius:6px}
+#lb p{color:#fde8ec;margin-top:14px;font:italic 300 1.2rem 'Fraunces',serif}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+
+<section class="hero">
+  <small id="from"></small>
+  <h1 id="name"></h1>
+  <p class="serif" id="tagline" style="font-size:1.4rem"></p>
+  <div class="counter" id="counter"></div>
+  <p class="since" id="since"></p>
+</section>
+
+<section>
+  <h2>From strangers to us</h2>
+  <p class="sub">Grade 8 to Grade 12, and everything after.</p>
+  <blockquote class="story serif" id="story"></blockquote>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<section>
+  <h2>Our moments</h2>
+  <p class="sub">Tap a photo to see it bigger.</p>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<section>
+  <h2>A letter for you</h2>
+  <p class="sub">&nbsp;</p>
+  <div class="letter" id="letter"></div>
+  <div class="surprise">
+    <button id="btn">Tap for a reason I love you</button>
+    <div id="msg" aria-live="polite"></div>
+  </div>
+</section>
+
+<footer class="serif" id="foot"></footer>
+
+<div id="lb" role="dialog" aria-label="Photo viewer"><img alt=""><p></p></div>
+
+<script>
+/* =====================  EDIT EVERYTHING HERE  ===================== */
+const CONFIG = {
+  herName: "Dikha",
+  myName: "Your BUG / Spandan Shrestha",
+  startDate: "2026-04-03T00:00:00",  // the day we started dating
+  tagline: "You are my favourite person in the whole world.",
+
+  // The short story shown at the top of "How we got here"
+  story: "On our Grade 8 tour, I never thought I'd be dating you. Never, tbh. But now, how foolish I was, because you turned out to be the best thing in my life. We went from strangers who didn't like each other (your side at least 😔) to friends, to best friends who shared everything about our days, even when we were rude. Then after 3 years, I finally found the courage to ask you out, and now we're a couple ❤️❤️❤️😝❤️",
+
+  // Timeline: add, remove or change anything (year labels are editable)
+  timeline: [
+    {date:"2021 · Grade 8", title:"Strangers on the tour", text:"We barely knew each other, and honestly you didn't like me much. I had no idea who you'd become to me."},
+    {date:"Late Grade 8", title:"From strangers to friends", text:"Somewhere along the way the dislike faded and we started talking. Write a small memory from this time here."},
+    {date:"Around Grade 9", title:"Best friends", text:"This is when we became best friends. We shared everything that happened in our day, even when we were rude to each other."},
+    {date:"Grade 10 – 12", title:"Still my person", text:"We might not have met in person a lot, but I will always remember how we used to chat: the little flirting, the little jokes, the little drunk talk, the little smiles we shared. I remember sports day, when I made a whole bouquet. I remember you coming to meet me even if it was just for names. I also remember your excitement for my birthday, which we never got to celebrate."},
+    {date:"Our last day", title:"The end of school, not of us", text:"We might have been from different schools, but the farewell was packed, if I'm being honest. I never thought I'd meet you again, or that we'd even talk. Things weren't so good between us, we weren't talking properly, and so on. But we landed in the same college, same shift, same faculty, just you in bio and me in comp. Well, I guess there's a bright side to me being in comp, because this is all my knowledge in one place."},
+    {date:"3 April 2026", title:"Finally, us", text:"After years of friendship I found the courage to ask, and you said yes. ❤️"}
+  ],
+
+  // PHOTOS: put image files inside the "images" folder, then list them here.
+  // Add / remove / reorder lines freely. Captions are optional: add , caption:"your text" after a src only if you want one.
+  photos: [
+    {src:"images/photo01.jpg", caption:"Every mirror in that room saw us."},
+    {src:"images/photo02.jpg", caption:"Pink shop, curved mirror, and a pout I adore."},
+    {src:"images/photo03.jpg", caption:"Us, upside down in a street mirror, still perfect."},
+    {src:"images/photo04.jpg", caption:"Some pairs just belong together."},
+    {src:"images/photo05.jpg", caption:"Cosy corner, matching glasses, my kind of afternoon."},
+    {src:"images/photo06.jpg", caption:"A late birthday wish I never forgot."},
+    {src:"images/photo07.jpg", caption:"High above everything, standing toe to toe with you."},
+    {src:"images/photo08.jpg", caption:"You making faces, me falling harder."},
+    {src:"images/photo09.jpg", caption:"Hiding from the rain, happy under one umbrella."},
+    {src:"images/photo10.jpg", caption:"Still re-reading this one."},
+    {src:"images/photo11.jpg", caption:"5 hours, 44 minutes, and I still didn't want to hang up."},
+    {src:"images/photo12.jpg", caption:"Lost in a hall of mirrors, found in you."},
+    {src:"images/photo13.jpg", caption:"A kiss on the cheek, and a thousand reflections of it."},
+    {src:"images/photo14.jpg", caption:"A quiet kiss with the whole city below us."},
+    {src:"images/photo15.jpg", caption:"Your story, my favourite compliment."},
+    {src:"images/photo16.jpg", caption:"Bunny ears, fox stickers, and my favourite person."},
+    {src:"images/photo17.jpg", caption:"Silly filters, serious love."},
+    {src:"images/photo18.jpg", caption:"Officially the best bestie club there is."},
+    {src:"images/photo19.jpg", caption:"Your words, saved forever."},
+    {src:"images/photo20.jpg", caption:"You aim, I hold on. Always a team."}
+  ],
+
+  letter: [
+    "Dikha,",
+    "If someone had told me on that Grade 8 tour that I'd be writing you a letter like this, I would have laughed at them. Honestly, I never thought we'd end up here. Never. You didn't even like me back then (yes, I still remember 😔), and I was just some random guy you had to put up with.",
+    "But somehow, slowly, we became friends. Then best friends. The kind who tell each other everything about their day, even the boring parts, even when we were being rude to each other. You became the first person I wanted to talk to when something happened, good or bad, and I didn't even notice when that started.",
+    "I think about the little things the most. The chats, the little flirting, the silly jokes, the little drunk talks, the smiles we shared. I remember sports day and the whole bouquet I made for you. I remember you coming to meet me even if it was just for a few minutes. I remember how excited you were for my birthday, even though we never got to celebrate it. I still wish we had.",
+    "Then school ended, and honestly, things between us weren't good. We weren't talking properly, and I really thought that was it. And then life did its thing and put us in the same college, same shift, same faculty. You in bio, me in comp. I'll keep saying it: someone up there wanted us to find each other again.",
+    "It took me three years to find the courage to ask you out. Three years of almosts and maybes. And on 3rd April 2026, you said yes, and that was the best day of my life. I mean it.",
+    "I'm not perfect, and you already know that better than anyone. But I promise to keep making you laugh, to listen when you need someone, to celebrate every birthday properly (starting with the ones we missed), and to keep choosing you, every single day.",
+    "Thank you for being my best friend first, and my girlfriend now. Thank you for your patience, your smile, and for giving me a chance. You are the best thing that ever happened to me, and I'm still the lucky one.",
+    "Here's to every day we have ahead of us. I love you, Dikha. ❤️"
+  ],
+
+  reasons: [
+    "Your smile fixes my worst days.",
+    "You make me want to be better.",
+    "Talking to you feels like home.",
+    "You laugh at my silly jokes.",
+    "You are kind to everyone you meet.",
+    "Because it's you. Always you."
+  ]
+};
+/* ================================================================== */
+
+const $ = id => document.getElementById(id);
+const C = CONFIG, start = new Date(C.startDate);
+
+$('from').textContent = "Made with love for";
+$('name').textContent = C.herName;
+$('tagline').textContent = C.tagline;
+document.title = "For " + C.herName;
+$('since').textContent = "Together since " + start.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+$('foot').textContent = "Forever yours, " + C.myName + " ❤";
+
+/* live counter */
+function tick(){
+  let ms = Math.max(0, Date.now() - start), s = Math.floor(ms/1000);
+  const d = Math.floor(s/86400), h = Math.floor(s%86400/3600), m = Math.floor(s%3600/60), sec = s%60;
+  $('counter').innerHTML = [[d,'days'],[h,'hours'],[m,'minutes'],[sec,'seconds']]
+    .map(([v,l]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
+}
+tick(); setInterval(tick,1000);
+
+$('story').textContent = C.story;
+/* timeline */
+$('timeline').innerHTML = C.timeline.map(e =>
+  `<div class="event"><time>${e.date}</time><h3>${e.title}</h3><p>${e.text}</p></div>`).join('');
+
+/* gallery + lightbox */
+const g = $('gallery'), lb = $('lb');
+C.photos.forEach(p => {
+  const f = document.createElement('figure'); f.tabIndex = 0;
+  const img = new Image(); img.src = p.src; img.alt = p.caption || "Us"; img.loading = "lazy";
+  img.onerror = () => { img.onerror = null; img.src = "data:image/svg+xml," + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500"><rect width="100%" height="100%" fill="#f8d7de"/><text x="50%" y="48%" font-size="60" text-anchor="middle">❤️</text><text x="50%" y="58%" font-size="16" fill="#7a4655" text-anchor="middle" font-family="sans-serif">Add photo: ' + p.src + '</text></svg>'); };
+  f.append(img);
+  if (p.caption) { const c = document.createElement('figcaption'); c.textContent = p.caption; f.append(c); }
+  const open = () => { lb.querySelector('img').src = img.src; lb.querySelector('p').textContent = p.caption || ""; lb.classList.add('on'); };
+  f.onclick = open; f.onkeydown = e => (e.key==='Enter') && open();
+  g.append(f);
+});
+lb.onclick = () => lb.classList.remove('on');
+addEventListener('keydown', e => e.key==='Escape' && lb.classList.remove('on'));
+
+/* letter */
+$('letter').innerHTML = C.letter.map(t => `<p>${t}</p>`).join('') + `<p class="sign">— ${C.myName}</p>`;
+
+/* reasons */
+let ri = 0;
+$('btn').onclick = () => { $('msg').textContent = C.reasons[ri++ % C.reasons.length]; burst(); };
+
+/* floating hearts */
+const cv = $('fx'), cx = cv.getContext('2d'); let W, H, hearts = [];
+const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+function size(){ W = cv.width = innerWidth; H = cv.height = innerHeight; } size(); addEventListener('resize', size);
+function mk(x,y,burst){ return {x:x??Math.random()*W, y:y??H+20, s:8+Math.random()*14, v:burst?-(1+Math.random()*3):-(.3+Math.random()*.7), dx:burst?(Math.random()-.5)*4:(Math.random()-.5)*.5, a:.15+Math.random()*.35}; }
+function burst(){ for(let i=0;i<22;i++) hearts.push(mk(W/2,H*.7,true)); }
+function loop(){
+  cx.clearRect(0,0,W,H);
+  if(!reduce && hearts.length<26 && Math.random()<.05) hearts.push(mk());
+  hearts = hearts.filter(h => h.y > -30);
+  hearts.forEach(h => { h.y += h.v; h.x += h.dx; cx.globalAlpha = h.a; cx.font = h.s+'px serif'; cx.fillText('❤', h.x, h.y); });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
